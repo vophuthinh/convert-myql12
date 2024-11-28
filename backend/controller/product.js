@@ -42,6 +42,44 @@ router.post(
     }
   })
 );
+router.put(
+  "/update-product",
+  upload.array("images"), 
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { shopId, productId, ...productData } = req.body;
+      console.log(req.body,'cc')
+      const shop = await Shop.findByPk(shopId);
+      const dataProduct = await Product.findOne({ where: { id: productId } });
+      if (!dataProduct) {
+        return next(new ErrorHandler("Sản phẩm không hợp lệ!", 400));
+      }
+      if (!shop) {
+        return next(new ErrorHandler("Cửa hàng không hợp lệ!", 400));
+      }
+      const files = req.files;
+      if (files && files.length > 0) {
+        const imageUrls = files.map((file) => `${file.filename}`); 
+        productData.images = imageUrls; 
+      }
+      dataProduct.name = productData.name || dataProduct.name;
+      dataProduct.description = productData.description || dataProduct.description;
+      dataProduct.price = productData.price || dataProduct.price;
+      dataProduct.discountPrice = productData.discountPrice || dataProduct.discountPrice;
+      dataProduct.originalPrice = productData.originalPrice || dataProduct.originalPrice;
+      dataProduct.shopId = shopId; 
+      dataProduct.images = productData.images || dataProduct.images; 
+      await dataProduct.save();
+      res.status(200).json({
+        success: true,
+        product: dataProduct,
+      });
+
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
 // get all products of a shop
 router.get(
@@ -56,7 +94,7 @@ router.get(
         newProduct.images = JSON.parse(newProduct.images);
         newProduct.shop = JSON.parse(newProduct.shop);
         newProduct.reviews = JSON.parse(newProduct.reviews);
-
+        
         return newProduct;
       });
       res.status(201).json({

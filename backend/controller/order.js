@@ -55,9 +55,26 @@ router.get(
       const orders = await Order.findAll({
         where: { "user.id": req.params.userId },
       })
+      const updatedProducts = orders.map(product => {
+        const newProduct = product.toJSON(); 
+        newProduct.cart = JSON.parse(newProduct.cart);
+        newProduct.shipping_address = JSON.parse(newProduct.shipping_address);
+        newProduct.user = JSON.parse(newProduct.user);
+        newProduct.paymentInfo = JSON.parse(newProduct.paymentInfo);
+        return newProduct;
+      });
+      const newUpdatedProducts = updatedProducts.map(product => ({
+        ...product,
+        shippingAddress: product.shipping_address,
+        totalPrice: product.total_price,
+        paidAt: product.paid_at,
+        deliveredAt: product.delivered_at,
+        createdAt : product.created_at
+
+      }));
       res.status(200).json({
         success: true,
-        orders,
+        orders :newUpdatedProducts,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -85,10 +102,18 @@ router.get(
 
         return newProduct;
       });
-      console.log(updatedProducts,'updatedProducts')
+      const newUpdatedProducts = updatedProducts.map(product => ({
+        ...product,
+        shippingAddress: product.shipping_address,
+        totalPrice: product.total_price,
+        paidAt: product.paid_at,
+        deliveredAt: product.delivered_at,
+        createdAt : product.created_at
+
+      }));
       res.status(200).json({
         success: true,
-        orders :updatedProducts,
+        orders :newUpdatedProducts,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -233,15 +258,21 @@ router.get(
         const newProduct = product.toJSON(); 
         newProduct.cart = JSON.parse(newProduct.cart);
         newProduct.shipping_address = JSON.parse(newProduct.shipping_address);
-        // newProduct.shippingAddress = JSON.parse(newProduct.shipping_address);
         newProduct.user = JSON.parse(newProduct.user);
         newProduct.paymentInfo = JSON.parse(newProduct.paymentInfo);
-
         return newProduct;
       });
+      const newUpdatedProducts = updatedProducts.map(product => ({
+        ...product,
+        shippingAddress: product.shipping_address,
+        totalPrice: product.total_price,
+        paidAt: product.paid_at,
+        deliveredAt: product.delivered_at,
+        createdAt : product.created_at
+      }));
       res.status(201).json({
         success: true,
-        orders :updatedProducts,
+        orders :newUpdatedProducts,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

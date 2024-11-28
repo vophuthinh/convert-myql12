@@ -22,10 +22,8 @@ router.post(
         const files = req.files;
         const imageUrls = files.map((file) => `${file.filename}`);
         const eventData = req.body;
-        console.log(eventData.name);
         eventData.images = imageUrls;
         eventData.shop = shop;
-
         const product = await Event.create(eventData);
         res.status(201).json({
           success: true,
@@ -37,20 +35,60 @@ router.post(
     }
   })
 );
-
+router.put(
+  "/update-event",
+  upload.array("images"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const shopId = req.body.shopId;
+      const eventId = req.body.eventId;
+      const shop = await Shop.findByPk(shopId);
+      const event = await Event.findByPk(eventId);
+      if (!event) {
+        return next(new ErrorHandler("event không hợp lệ!", 400));
+      }
+      if (!shop) {
+        return next(new ErrorHandler("Id cửa hàng không hợp lệ!", 400));
+      }
+      const files = req.files;
+      const imageUrls = files.map((file) => `${file.filename}`);
+      const eventData = req.body;
+      eventData.images = imageUrls;
+      eventData.shop = shop;
+      event.name = eventData.name || event.name;
+      event.description = eventData.description || event.description;
+      event.category = eventData.category || event.category;
+      event.discountPrice = eventData.discountPrice || event.discountPrice;
+      event.start_Date = eventData.start_Date || event.start_Date;
+      event.Finish_Date = eventData.Finish_Date || event.Finish_Date;
+      event.originalPrice = eventData.originalPrice || event.originalPrice;
+      event.shopId = shopId;
+      event.images = eventData.images || event.images;
+      const product = await event.save();
+      res.status(201).json({
+        success: true,
+        product,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
 // get all events
 router.get("/get-all-events", async (req, res, next) => {
   try {
     const events = await Event.findAll({});
-    const updatedProducts = events.map(product => {
-      const newProduct = product.toJSON(); 
+    const updatedProducts = events.map((product) => {
+      const newProduct = product.toJSON();
       newProduct.images = JSON.parse(newProduct.images);
       newProduct.shop = JSON.parse(newProduct.shop);
+      newProduct.tags = JSON.parse(newProduct.tags);
+
       return newProduct;
     });
     res.status(201).json({
       success: true,
-      events :updatedProducts,
+      events: updatedProducts,
     });
   } catch (error) {
     return next(new ErrorHandler(error, 400));
@@ -63,15 +101,17 @@ router.get(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const events = await Event.findAll({ where: { shopId: req.params.id } });
-      const updatedProducts = events.map(product => {
-        const newProduct = product.toJSON(); 
+      const updatedProducts = events.map((product) => {
+        const newProduct = product.toJSON();
         newProduct.images = JSON.parse(newProduct.images);
         newProduct.shop = JSON.parse(newProduct.shop);
+      newProduct.tags = JSON.parse(newProduct.tags);
+
         return newProduct;
       });
       res.status(201).json({
         success: true,
-        events :updatedProducts,
+        events: updatedProducts,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
@@ -87,7 +127,7 @@ router.delete(
       const productId = req.params.id;
 
       const eventData = await Event.findByPk(productId);
-      const ImageEvent = JSON.parse(eventData.images)
+      const ImageEvent = JSON.parse(eventData.images);
       ImageEvent.forEach((imageUrl) => {
         const filename = imageUrl;
         const filePath = `uploads/${filename}`;
@@ -99,7 +139,7 @@ router.delete(
         });
       });
 
-      const event = await eventData.destroy()
+      const event = await eventData.destroy();
 
       if (!event) {
         return next(
@@ -124,7 +164,7 @@ router.get(
   isAdmin("Admin"),
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const events = await Event.findAll({})
+      const events = await Event.findAll({});
       res.status(201).json({
         success: true,
         events,

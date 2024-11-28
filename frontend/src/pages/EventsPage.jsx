@@ -7,7 +7,7 @@ import PageNotfound from "./PageNotfound";
 
 const EventsPage = () => {
   const { allEvents, isLoading } = useSelector((state) => state.events);
-  console.log(allEvents.length);
+  console.log(allEvents,'allEventsallEvents');
   return (
     <>
       {isLoading ? (

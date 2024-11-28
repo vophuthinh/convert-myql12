@@ -11,7 +11,7 @@ const AdminDashboardOrders = () => {
   const { adminOrders, adminOrderLoading } = useSelector(
     (state) => state.order
   );
-
+  console.log(adminOrders,'adminOrders')
   useEffect(() => {
     dispatch(getAllOrdersOfAdmin());
   }, []);

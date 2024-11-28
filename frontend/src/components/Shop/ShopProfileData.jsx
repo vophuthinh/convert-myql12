@@ -42,8 +42,8 @@ const ShopProfileData = ({ isOwner }) => {
 
     const [active, setActive] = useState(1);
 
-    const allReviews = products && products.map((product) => product.reviews).flat();
-
+    const allReviews = products && products.map((product) => product.reviews || []).flat();
+    console.log(products,'allReviewsallReviews')
     return (
         <div className="w-full">
             <div className="flex w-full items-center justify-between bg-[#232f3e] p-3 rounded-xl">

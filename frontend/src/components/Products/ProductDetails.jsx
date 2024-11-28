@@ -37,6 +37,7 @@ const ProductDetails = ({ data }) => {
     };
 
     const addToCartHandler = () => {
+        console.log(data,'datadata')
         if (cart.some((i) => i.id === data.id)) {
             toast.error('The product is already in the cart!');
         } else if (data.stock < 1) {
@@ -46,9 +47,9 @@ const ProductDetails = ({ data }) => {
             toast.success('The product has been added to the cart!');
         }
     };
-
-    const totalReviewsLength = products?.reduce((acc, product) => acc + product?.reviews?.length, 0) || 0;
-    const totalRatings =
+    console.log(products,'productproductproduct')
+    const totalReviewsLength = products?.reviews && products?.reduce((acc, product) => acc + product?.reviews?.length, 0) || 0;
+    const totalRatings = products?.reviews &&
         products?.reduce((acc, product) => acc + product?.reviews.reduce((sum, review) => sum + review.rating, 0), 0) ||
         0;
     const averageRating = (totalRatings / totalReviewsLength || 0).toFixed(2);
@@ -271,7 +272,7 @@ const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRating 
             )}
             {activeTab === 2 && (
                 <div className="space-y-4">
-                    {data.reviews.length > 0 ? (
+                    {data?.reviews && data?.reviews?.length > 0 ? (
                         data.reviews.map((review, index) => (
                             <div key={index} className="flex space-x-4 bg-gray-100 p-4 rounded-lg shadow-md">
                                 <img

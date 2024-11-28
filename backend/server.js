@@ -11,18 +11,18 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
     });
 }
 sequelize
-    .authenticate()
-    .then(() => {
-        console.log('MySQL connected...');
-        // return sequelize.sync({ alter: true });
-    })
-    .then(() => {
-        console.log('All models synchronized successfully.');
-    })
-    .catch((err) => {
-        console.error('Connection error:', err);
-        process.exit(1);
-    });
+  .authenticate()
+  .then(() => {
+    console.log("MySQL connected...");
+    // return sequelize.sync({ alter: true })
+  })
+  .then(() => {
+    console.log("All models synchronized successfully.");
+  })
+  .catch((err) => {
+    console.error("Connection error:", err);
+    process.exit(1); 
+  });
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,

@@ -17,7 +17,7 @@ const ProductsPage = () => {
   const { allProducts, isLoading } = useSelector((state) => state.products);
   const [data, setData] = useState([]);
   const [sortOption, setSortOption] = useState("default");
-
+  console.log(data,'datadataxxx')
   const defaultOptions = {
     loop: false,
     autoplay: true,
@@ -99,12 +99,6 @@ const ProductsPage = () => {
               {/* Products List */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {data?.map((product, index) => {
-
-                  const newProduct = product.map((itc, index) => ({
-                    ...itc,
-                    shop: JSON.parse(itc.shop),
-                  }));
-                  console.log(newProduct,'newProduct')
                   return <ProductCard data={product} key={index} />
                 })}
               </div>
