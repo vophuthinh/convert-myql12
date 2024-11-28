@@ -1,42 +1,40 @@
-const app = require("./app");
-const cloudinary = require('cloudinary')
-const sequelize = require('./config/database'); 
-process.on("uncaughtException", (err) => {
-  console.log(`Error: ${err.message}`);
-  console.log(`shutting down the server for handling uncaught exception`);
+const app = require('./app');
+const cloudinary = require('cloudinary');
+const sequelize = require('./config/database');
+process.on('uncaughtException', (err) => {
+    console.log(`Error: ${err.message}`);
+    console.log(`shutting down the server for handling uncaught exception`);
 });
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  require("dotenv").config({
-    path: "config/.env",
-  });
+if (process.env.NODE_ENV !== 'PRODUCTION') {
+    require('dotenv').config({
+        path: 'config/.env',
+    });
 }
 sequelize
-  .authenticate()
-  .then(() => {
-    console.log("MySQL connected...");
-    // return sequelize.sync({ alter: true })
-  })
-  .then(() => {
-    console.log("All models synchronized successfully.");
-  })
-  .catch((err) => {
-    console.error("Connection error:", err);
-    process.exit(1); 
-  });
+    .authenticate()
+    .then(() => {
+        console.log('MySQL connected...');
+        // return sequelize.sync({ alter: true });
+    })
+    .then(() => {
+        console.log('All models synchronized successfully.');
+    })
+    .catch((err) => {
+        console.error('Connection error:', err);
+        process.exit(1);
+    });
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-})
-const server = app.listen(process.env.PORT, () => {
-  console.log(
-    `Server is running on http://localhost:${process.env.PORT}`
-  );
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-process.on("unhandledRejection", (err) => {
-  console.log(`Shutting down the server for ${err.message}`);
-  console.log(`shutting down the server for unhandle promise rejection`);
-  server.close(() => {
-    process.exit(1);
-  });
+const server = app.listen(process.env.PORT, () => {
+    console.log(`Server is running on http://localhost:${process.env.PORT}`);
+});
+process.on('unhandledRejection', (err) => {
+    console.log(`Shutting down the server for ${err.message}`);
+    console.log(`shutting down the server for unhandle promise rejection`);
+    server.close(() => {
+        process.exit(1);
+    });
 });
