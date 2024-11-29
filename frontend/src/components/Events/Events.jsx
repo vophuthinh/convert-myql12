@@ -15,7 +15,7 @@ const Events = () => {
         <div>
             {!isLoading && (
                 <>
-                    {allEvents.length !== 0 && (
+                    {allEvents?.length !== 0 && (
                         <>
                             <div className={`${styles.section}`}>
                                 <div className={`${styles.heading}`}>
